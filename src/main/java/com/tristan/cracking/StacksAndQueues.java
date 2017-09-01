@@ -1,7 +1,7 @@
 package com.tristan.cracking;
 
-import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.ArrayList;
 
 class MyStack<T> {
     private static class StackNode<T> {
@@ -79,6 +79,78 @@ class MinStack {
 
     public boolean isEmpty() {
         return top == null;
+    }
+}
+
+class SetOfStacks<T> {
+    private static class StackNode<T> {
+        private T data;
+        private StackNode<T> next;
+
+        public StackNode(T data) {
+            this.data = data;
+        }
+    }
+
+    private int stackSize;
+    private ArrayList<StackNode<T>> tops;
+    private ArrayList<Integer> size;
+
+    SetOfStacks(int stackSize) {
+        this.stackSize = stackSize;
+        tops = new ArrayList<StackNode<T>>();
+        size = new ArrayList<Integer>();
+    }
+
+    public T pop(){
+        return this.popAt(tops.size() - 1);
+    }
+
+    public T popAt(int index){
+        if(this.isEmpty()) throw new EmptyStackException();
+        if(index >= tops.size() || index < 0) throw new IndexOutOfBoundsException();
+
+        StackNode<T> node = tops.get(index);
+        T item = node.data;
+
+        node = node.next;
+
+        if(node == null) {
+            tops.remove(index);
+            size.remove(index);
+        } else {
+            tops.set(index, node);
+            size.set(index, size.get(index) - 1);
+        }
+
+        return item;
+    }
+
+    public void push(T item) {
+        int endIndex = tops.size() - 1;
+        if(this.isEmpty() || size.get(endIndex) >= stackSize) {
+            tops.add(new StackNode<T>(item));
+            size.add(1);
+        } else {
+            StackNode<T> newTop = new StackNode<T>(item);
+            newTop.next = tops.get(endIndex);
+            tops.set(endIndex, newTop);
+            size.set(endIndex, size.get(endIndex) + 1);
+        }
+    }
+
+    public T peek() {
+        if (this.isEmpty()) throw new EmptyStackException();
+        return tops.get(tops.size() - 1).data;
+    }
+
+    public boolean isEmpty() {
+        return tops.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return tops.toString();
     }
 }
 
