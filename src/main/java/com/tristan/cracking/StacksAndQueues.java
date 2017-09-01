@@ -39,6 +39,49 @@ class MyStack<T> {
     }
 }
 
+class MinStack {
+    private static class StackNode<T> {
+        private int data;
+        private StackNode<T> next;
+        private int min;
+
+        public StackNode(int data, int min) {
+            this.data = data;
+            this.min = min;
+        }
+    }
+
+    private StackNode top;
+
+    public int pop(){
+        if (top == null) throw new EmptyStackException();
+        int item = top.data;
+
+        top = top.next;
+        return item;
+    }
+
+    public void push(int item) {
+        StackNode t = new StackNode(item, top==null? item : (top.min > item ? item : top.min) );
+        t.next = top;
+        top = t;
+    }
+
+    public int peek() {
+        if (top == null) throw new EmptyStackException();
+        return top.data;
+    }
+
+    public int minValue() {
+        if (top == null) throw new EmptyStackException();
+        return top.min;
+    }
+
+    public boolean isEmpty() {
+        return top == null;
+    }
+}
+
 class MyQueue<T> {
     private static class QueueNode<T> {
         private T data;
