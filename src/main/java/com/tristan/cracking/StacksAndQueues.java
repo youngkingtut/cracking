@@ -34,7 +34,7 @@ class MyStack<T> {
         return top.data;
     }
 
-    public boolean usEmpty() {
+    public boolean isEmpty() {
         return top == null;
     }
 }
@@ -85,8 +85,61 @@ class MyQueue<T> {
 }
 
 
+class ArrayStack {
+    int[] basePointer;
+    int[] stackPointer;
+    int[] stack;
+    int stackSize;
+
+    ArrayStack(int size, int stackSize) {
+        this.stackSize = stackSize;
+        this.stack = new int[size];
+        this.stackPointer = new int[stackSize];
+        this.basePointer = new int[stackSize];
+
+        for(int i=0; i<stackSize; i++){
+            int temp = i * (size / stackSize);
+            this.stackPointer[i] = temp;
+            this.basePointer[i] = temp;
+        }
+    }
+
+    public void push(int stack, int value) {
+        if (stackPointer[stack] == stackPointer[(stack + 1) % stackSize]) throw new StackOverflowError();
+        this.stack[stackPointer[stack]] = value;
+        stackPointer[stack]++;
+    }
+
+    public int pop(int stack) {
+        if(stackPointer[stack] == basePointer[stack]) throw new EmptyStackException();
+        stackPointer[stack]--;
+        return this.stack[stackPointer[stack]];
+    }
+
+    public int peek(int stack) {
+        if(stackPointer[stack] == basePointer[stack]) throw new EmptyStackException();
+        return this.stack[stackPointer[stack]];
+    }
+
+    public boolean isEmpty(int stack) {
+        return stackPointer[stack] == basePointer[stack];
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+
+        for (int aStack : this.stack) {
+            s.append(aStack);
+            s.append(", ");
+        }
+
+        return s.toString();
+    }
+}
+
+
 public class StacksAndQueues {
     public static void main(String[] args) {
-
     }
 }
