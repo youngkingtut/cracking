@@ -13,6 +13,7 @@ class MyStack<T> {
         }
     }
 
+    private int size = 0;
     private StackNode<T> top;
 
     public T pop(){
@@ -20,6 +21,7 @@ class MyStack<T> {
         T item = top.data;
 
         top = top.next;
+        size--;
         return item;
     }
 
@@ -27,6 +29,7 @@ class MyStack<T> {
         StackNode<T> t = new StackNode<T>(item);
         t.next = top;
         top = t;
+        size++;
     }
 
     public T peek() {
@@ -36,6 +39,10 @@ class MyStack<T> {
 
     public boolean isEmpty() {
         return top == null;
+    }
+
+    public int getSize() {
+        return size;
     }
 }
 
@@ -199,6 +206,72 @@ class MyQueue<T> {
     }
 }
 
+class QueueViaTwoStacks<T> {
+    private static class QueueNode<T> {
+        private T data;
+        private QueueNode<T> next;
+
+        public QueueNode(T data) {
+            this.data = data;
+        }
+    }
+
+    private MyStack<T> stack1 = new MyStack<T>();
+    private MyStack<T> stack2 = new MyStack<T>();
+    private MyStack<T> pushStack = stack1;
+    private MyStack<T> popStack = stack1;
+
+    public void add(T item) {
+
+        int size = pushStack.getSize();
+        MyStack<T> otherStack;
+
+        if(pushStack == stack1) {
+            otherStack = stack2;
+        } else {
+            otherStack = stack1;
+        }
+
+        for(int i = 0; i < size; i++) {
+            otherStack.push(pushStack.pop());
+        }
+        pushStack.push(item);
+        for(int i = 0; i < size; i++) {
+            pushStack.push(otherStack.pop());
+        }
+
+        if(pushStack == stack1) {
+            pushStack = stack2;
+        } else {
+            pushStack = stack1;
+        }
+    }
+
+    public T remove(){
+        if(popStack.isEmpty()) throw new EmptyStackException();
+        T item = popStack.pop();
+
+        if(popStack == stack1){
+            popStack = stack2;
+            pushStack = stack1;
+        } else {
+            popStack = stack1;
+            pushStack = stack2;
+        }
+
+        return item;
+    }
+
+    public T peek() {
+        if(popStack.isEmpty()) throw new EmptyStackException();
+        return popStack.peek();
+    }
+
+    public boolean isEmpty() {
+        return stack1.isEmpty() && stack2.isEmpty();
+    }
+
+}
 
 class ArrayStack {
     int[] basePointer;
