@@ -1,5 +1,6 @@
 package com.tristan.cracking;
 
+import java.util.Comparator;
 import java.util.EmptyStackException;
 import java.util.ArrayList;
 
@@ -326,6 +327,52 @@ class ArrayStack {
     }
 }
 
+
+class SortedStack<T extends Comparable<T>> {
+    private MyStack<T> temp;
+    private MyStack<T> stack;
+
+    SortedStack() {
+        this.stack = new MyStack<T>();
+    }
+
+    public void push(T value) {
+        temp = new MyStack<T>();
+
+        while(!this.stack.isEmpty()) {
+            if(value.compareTo(this.stack.peek()) > 0) {
+                temp.push(this.stack.pop());
+            } else {
+                this.stack.push(value);
+                break;
+            }
+        }
+
+        if(this.stack.isEmpty()) {
+            this.stack.push(value);
+        }
+
+        while(!this.temp.isEmpty()) {
+            this.stack.push(this.temp.pop());
+        }
+
+
+    }
+
+    public T pop() {
+        if(this.stack.isEmpty()) throw new EmptyStackException();
+        return this.stack.pop();
+    }
+
+    public T peek() {
+        if(this.stack.isEmpty()) throw new EmptyStackException();
+        return this.stack.peek();
+    }
+
+    public boolean isEmpty(){
+        return this.stack.isEmpty();
+    }
+}
 
 public class StacksAndQueues {
     public static void main(String[] args) {
