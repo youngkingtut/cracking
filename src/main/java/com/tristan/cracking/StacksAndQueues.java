@@ -1,8 +1,8 @@
 package com.tristan.cracking;
 
-import java.util.Comparator;
 import java.util.EmptyStackException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 class MyStack<T> {
     private static class StackNode<T> {
@@ -372,6 +372,100 @@ class SortedStack<T extends Comparable<T>> {
     public boolean isEmpty(){
         return this.stack.isEmpty();
     }
+}
+
+abstract class Animal {
+    private long count;
+    String type;
+    String name;
+
+    long getCount(){
+        return count;
+    }
+
+    @Override
+    public String toString() {
+        return type + " " + name;
+    }
+}
+class Dog extends Animal {
+    Dog(String name) {
+        this.name = name;
+        type = "Dog";
+    }
+}
+class Cat extends Animal {
+    Cat(String name) {
+        this.name = name;
+        type = "Cat";
+    }
+}
+
+class AnimalShelterQueue {
+    class Node<T> {
+        T data;
+        long count;
+
+        Node(T data, long count) {
+            this.data = data;
+            this.count = count;
+        }
+
+        public long getCount() {
+            return count;
+        }
+
+        public T getData() {
+            return data;
+        }
+    }
+
+    private LinkedList<Node<Dog>> dogs = new LinkedList<Node<Dog>>();
+    private LinkedList<Node<Cat>> cats = new LinkedList<Node<Cat>>();
+    private long count = 0;
+
+    public void enqueue(Animal animal) {
+        if(animal instanceof Dog) {
+            dogs.add(new Node<Dog>((Dog) animal, count));
+        } else if (animal instanceof Cat) {
+            cats.add(new Node<Cat>((Cat) animal, count));
+        }
+        count++;
+    }
+
+    public Cat dequeueCat() {
+        if(cats.isEmpty()) throw new EmptyStackException();
+        count--;
+        return cats.remove().getData();
+    }
+
+    public Dog dequeueDog() {
+        if(dogs.isEmpty()) throw new EmptyStackException();
+        count--;
+        return dogs.remove().getData();
+    }
+
+    public Animal dequeueAny() {
+        if(dogs.isEmpty() && cats.isEmpty()) throw new EmptyStackException();
+        count--;
+        if(cats.isEmpty()) {
+            return dogs.remove().getData();
+        } else if(dogs.isEmpty()) {
+            return cats.remove().getData();
+        } else {
+            if(cats.getFirst().getCount() > dogs.getFirst().getCount()) {
+                return dogs.remove().getData();
+            } else {
+                return cats.remove().getData();
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Cats: " + cats.toString() + "\nDogs: " + dogs.toString();
+    }
+
 }
 
 public class StacksAndQueues {
