@@ -1,8 +1,8 @@
 package com.tristan.cracking;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
+import sun.awt.image.ImageWatched;
+
+import java.util.*;
 
 class GraphNode {
     private String name;
@@ -114,6 +114,14 @@ class BinaryNode<T extends Comparable<T>> {
         this.right = right;
     }
 
+    public BinaryNode<T> getLeft() {
+        return left;
+    }
+
+    public BinaryNode<T> getRight() {
+        return right;
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(this.data.toString());
@@ -126,7 +134,7 @@ class BinaryNode<T extends Comparable<T>> {
 
 
 public class TreesAndGraphs {
-    static BinaryNode<Integer> buildBinarySearchTreeFromAscendingUniqueList(List<Integer> list) {
+    private static BinaryNode<Integer> buildBinarySearchTreeFromAscendingUniqueList(List<Integer> list) {
         if(list.isEmpty()) {
             return null;
         } else if (list.size() == 1){
@@ -139,11 +147,38 @@ public class TreesAndGraphs {
         }
     }
 
+    private static HashMap<Integer, LinkedList<BinaryNode<Integer>>> depthListBuilder(HashMap<Integer, LinkedList<BinaryNode<Integer>>> m, BinaryNode<Integer> node, Integer depth) {
+        if(node != null) {
+            if (m.containsKey(depth)) {
+                m.get(depth).add(node);
+            } else {
+                LinkedList<BinaryNode<Integer>> l = new LinkedList<BinaryNode<Integer>>();
+                l.add(node);
+                m.put(depth, l);
+            }
+            m = depthListBuilder(m, node.getLeft(), depth + 1);
+            m = depthListBuilder(m, node.getRight(), depth + 1);
+        }
+        return m;
+    }
+
+    private static ArrayList<LinkedList<BinaryNode<Integer>>> depthLists(BinaryNode<Integer> root) {
+        HashMap<Integer, LinkedList<BinaryNode<Integer>>> m = new HashMap<Integer, LinkedList<BinaryNode<Integer>>>();
+
+        m = depthListBuilder(m, root, 0);
+
+        ArrayList<LinkedList<BinaryNode<Integer>>> l = new ArrayList<LinkedList<BinaryNode<Integer>>>();
+        for(Map.Entry<Integer, LinkedList<BinaryNode<Integer>>> e: m.entrySet()) {
+            l.add(e.getValue());
+        }
+        return l;
+    }
+
     static public void main(String[] args) {
         List<Integer> l = new ArrayList<Integer>(
-            Arrays.asList(1,2,3,4,5,6,7,8,9)
+            Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
         );
 
-        System.out.println(buildBinarySearchTreeFromAscendingUniqueList(l));
+        System.out.println(depthLists(buildBinarySearchTreeFromAscendingUniqueList(l)));
     }
 }
