@@ -1,6 +1,8 @@
 package com.tristan.cracking;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 
 class GraphNode {
     private String name;
@@ -101,7 +103,47 @@ class Graph {
 }
 
 
+class BinaryNode<T extends Comparable<T>> {
+    private T data;
+    private BinaryNode<T> left;
+    private BinaryNode<T> right;
+
+    BinaryNode(T data, BinaryNode<T> left, BinaryNode<T> right) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(this.data.toString());
+        s.append(" ");
+        if(this.left != null) s.append(this.left.toString());
+        if(this.right != null) s.append(this.right.toString());
+        return s.toString();
+    }
+}
+
+
 public class TreesAndGraphs {
+    static BinaryNode<Integer> buildBinarySearchTreeFromAscendingUniqueList(List<Integer> list) {
+        if(list.isEmpty()) {
+            return null;
+        } else if (list.size() == 1){
+            return new BinaryNode<Integer>(list.get(0), null, null);
+        } else {
+            int half = list.size() / 2;
+            BinaryNode<Integer> left = buildBinarySearchTreeFromAscendingUniqueList(list.subList(0, half));
+            BinaryNode<Integer> right = buildBinarySearchTreeFromAscendingUniqueList(list.subList(half + 1, list.size()));
+            return new BinaryNode<Integer>(list.get(half), left, right);
+        }
+    }
+
     static public void main(String[] args) {
+        List<Integer> l = new ArrayList<Integer>(
+            Arrays.asList(1,2,3,4,5,6,7,8,9)
+        );
+
+        System.out.println(buildBinarySearchTreeFromAscendingUniqueList(l));
     }
 }
