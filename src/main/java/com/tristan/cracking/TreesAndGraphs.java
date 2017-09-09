@@ -174,11 +174,35 @@ public class TreesAndGraphs {
         return l;
     }
 
+    private static <T extends Comparable<T>> int depth(BinaryNode<T> node) {
+        if(node == null) {
+            return 0;
+        } else {
+            int depthRight = depth(node.getRight());
+            int depthLeft = depth(node.getLeft());
+            int childDepth = depthLeft > depthRight? depthLeft: depthRight;
+            return ++childDepth;
+        }
+    }
+
+    private static <T extends Comparable<T>> boolean isBalanced(BinaryNode<T> node) {
+        return node == null ||Math.abs(depth(node.getLeft()) - depth(node.getRight())) <= 1 && isBalanced(node.getLeft()) && isBalanced(node.getRight());
+    }
+
     static public void main(String[] args) {
         List<Integer> l = new ArrayList<Integer>(
-            Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+            Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
         );
 
-        System.out.println(depthLists(buildBinarySearchTreeFromAscendingUniqueList(l)));
+        BinaryNode<Integer> y = new BinaryNode<Integer>(1, new BinaryNode<Integer>(2, new BinaryNode<Integer>(3, null, null), null), null);
+
+        BinaryNode<Integer> x = buildBinarySearchTreeFromAscendingUniqueList(l);
+        System.out.println(x);
+        System.out.println(depth(x));
+        System.out.println(isBalanced(x));
+
+        System.out.println(y);
+        System.out.println(depth(y));
+        System.out.println(isBalanced(y));
     }
 }
