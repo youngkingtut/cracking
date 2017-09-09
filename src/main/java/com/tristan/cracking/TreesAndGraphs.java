@@ -105,11 +105,18 @@ class Graph {
 
 class BinaryNode<T extends Comparable<T>> {
     private T data;
+    private BinaryNode<T> parent;
     private BinaryNode<T> left;
     private BinaryNode<T> right;
 
     BinaryNode(T data, BinaryNode<T> left, BinaryNode<T> right) {
         this.data = data;
+        if(left != null) {
+            left.setParent(this);
+        }
+        if(right != null) {
+            right.setParent(this);
+        }
         this.left = left;
         this.right = right;
     }
@@ -118,12 +125,20 @@ class BinaryNode<T extends Comparable<T>> {
         return this.data;
     }
 
+    BinaryNode<T> getParent() {
+        return parent;
+    }
+
     BinaryNode<T> getLeft() {
         return left;
     }
 
     BinaryNode<T> getRight() {
         return right;
+    }
+
+    void setParent(BinaryNode<T> parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -207,20 +222,61 @@ public class TreesAndGraphs {
         }
     }
 
+    private static <T extends Comparable<T>> BinaryNode<T> inOrderSuccesor(BinaryNode<T> node) {
+        if(node.getRight() != null) {
+            node = node.getRight();
+            while(true){
+                if(node.getLeft() == null) {
+                    return node;
+                } else {
+                    node = node.getLeft();
+                }
+            }
+        } else {
+            if(node.getParent() == null) {
+                return null;
+            } else if (node.getParent().getLeft() == node) {
+                return node.getParent();
+            }
+
+            BinaryNode<T> temp = node;
+            while(true) {
+                if(node.getParent() == null) {
+                    if(node.getRight() == temp) {
+                        return null;
+                    } else {
+                        return node;
+                    }
+                } else {
+                    temp = node;
+                    node = node.getParent();
+                }
+            }
+        }
+
+    }
+
     static public void main(String[] args) {
-        List<Integer> l = new ArrayList<Integer>(
-            Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
-        );
+        BinaryNode<Character> H = new BinaryNode<Character>('H', null, null);
 
-        BinaryNode<Integer> y = new BinaryNode<Integer>(1, new BinaryNode<Integer>(2, new BinaryNode<Integer>(3, null, null), null), null);
+        BinaryNode<Character> E = new BinaryNode<Character>('E', null, null);
+        BinaryNode<Character> F = new BinaryNode<Character>('F', null, null);
+        BinaryNode<Character> G = new BinaryNode<Character>('G', null, null);
+        BinaryNode<Character> D = new BinaryNode<Character>('D', H, null);
 
-        BinaryNode<Integer> x = buildBinarySearchTreeFromAscendingUniqueList(l);
-        System.out.println(x);
-        System.out.println(depth(x));
-        System.out.println(isBinarySearchTree(x));
 
-        System.out.println(y);
-        System.out.println(depth(y));
-        System.out.println(isBinarySearchTree(y));
+        BinaryNode<Character> C = new BinaryNode<Character>('C', F, G);
+        BinaryNode<Character> B = new BinaryNode<Character>('B', D, E);
+
+        BinaryNode<Character> A = new BinaryNode<Character>('A', B, C);
+
+        System.out.println(inOrderSuccesor(A));
+        System.out.println(inOrderSuccesor(B));
+        System.out.println(inOrderSuccesor(C));
+        System.out.println(inOrderSuccesor(D));
+        System.out.println(inOrderSuccesor(E));
+        System.out.println(inOrderSuccesor(F));
+        System.out.println(inOrderSuccesor(G));
+        System.out.println(inOrderSuccesor(H));
     }
 }
