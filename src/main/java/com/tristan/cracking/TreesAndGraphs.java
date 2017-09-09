@@ -114,11 +114,15 @@ class BinaryNode<T extends Comparable<T>> {
         this.right = right;
     }
 
-    public BinaryNode<T> getLeft() {
+    T getData() {
+        return this.data;
+    }
+
+    BinaryNode<T> getLeft() {
         return left;
     }
 
-    public BinaryNode<T> getRight() {
+    BinaryNode<T> getRight() {
         return right;
     }
 
@@ -189,6 +193,20 @@ public class TreesAndGraphs {
         return node == null ||Math.abs(depth(node.getLeft()) - depth(node.getRight())) <= 1 && isBalanced(node.getLeft()) && isBalanced(node.getRight());
     }
 
+    private static <T extends Comparable<T>> boolean isBinarySearchTree(BinaryNode<T> node) {
+        if(node == null) {
+            return true;
+        } else {
+            if(node.getLeft() != null && node.getData().compareTo(node.getLeft().getData()) < 0) {
+                return false;
+            } else if (node.getRight() != null && node.getData().compareTo(node.getRight().getData()) >= 0) {
+                return false;
+            } else {
+                return isBinarySearchTree(node.getLeft()) && isBinarySearchTree(node.getRight());
+            }
+        }
+    }
+
     static public void main(String[] args) {
         List<Integer> l = new ArrayList<Integer>(
             Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
@@ -199,10 +217,10 @@ public class TreesAndGraphs {
         BinaryNode<Integer> x = buildBinarySearchTreeFromAscendingUniqueList(l);
         System.out.println(x);
         System.out.println(depth(x));
-        System.out.println(isBalanced(x));
+        System.out.println(isBinarySearchTree(x));
 
         System.out.println(y);
         System.out.println(depth(y));
-        System.out.println(isBalanced(y));
+        System.out.println(isBinarySearchTree(y));
     }
 }
