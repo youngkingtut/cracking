@@ -348,29 +348,48 @@ public class TreesAndGraphs {
 
     }
 
+    private static <T extends Comparable<T>> BinaryNode<T> firstCommonAncestor(BinaryNode<T> a, BinaryNode<T> b) {
+        if(a.getParent() == null || b.getParent() == null) {
+            return null;
+        } else {
+            a = a.getParent();
+            b = b.getParent();
+            BinaryNode<T> temp = b;
+
+            while(a != null) {
+                b = temp;
+                while(b != null) {
+                    if(a == b) {
+                        return a;
+                    }
+                    b = b.getParent();
+                }
+                a = a.getParent();
+            }
+            return null;
+        }
+    }
+
     static public void main(String[] args) {
-        final Tuple<Character, Character> d1 = new Tuple<Character, Character>('a', 'd');
-        final Tuple<Character, Character> d2 = new Tuple<Character, Character>('f', 'b');
-        final Tuple<Character, Character> d3 = new Tuple<Character, Character>('b', 'd');
-        final Tuple<Character, Character> d4 = new Tuple<Character, Character>('f', 'a');
-        final Tuple<Character, Character> d5 = new Tuple<Character, Character>('d', 'c');
+        BinaryNode<Character> H = new BinaryNode<Character>('H', null, null);
 
-        ArrayList<Tuple<Character, Character>> d = new ArrayList<Tuple<Character, Character>>() {{
-            add(d1);add(d2);add(d3);add(d4);add(d5);
-        }};
+        BinaryNode<Character> E = new BinaryNode<Character>('E', null, null);
+        BinaryNode<Character> F = new BinaryNode<Character>('F', null, null);
+        BinaryNode<Character> G = new BinaryNode<Character>('G', null, null);
+        BinaryNode<Character> D = new BinaryNode<Character>('D', H, null);
 
-        ArrayList<Character> code = new ArrayList<Character>() {{
-            add('a');
-            add('b');
-            add('c');
-            add('d');
-            add('e');
-            add('f');
-        }};
 
-        DependencyGraph g = new DependencyGraph(code, d);
+        BinaryNode<Character> C = new BinaryNode<Character>('C', F, G);
+        BinaryNode<Character> B = new BinaryNode<Character>('B', D, E);
 
-        System.out.println(g);
-        System.out.println(g.buildOrder());
+        BinaryNode<Character> A = new BinaryNode<Character>('A', B, C);
+
+        System.out.println(firstCommonAncestor(D, E));
+        System.out.println(firstCommonAncestor(D, F));
+        System.out.println(firstCommonAncestor(D, C));
+        System.out.println(firstCommonAncestor(H, E));
+        System.out.println(firstCommonAncestor(F, G));
+        System.out.println(firstCommonAncestor(A, B));
+        System.out.println(firstCommonAncestor(B, C));
     }
 }
