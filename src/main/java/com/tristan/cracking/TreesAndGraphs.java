@@ -1,5 +1,6 @@
 package com.tristan.cracking;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -370,26 +371,60 @@ public class TreesAndGraphs {
         }
     }
 
+    private static <T extends Comparable<T>> void weave(LinkedList<BinaryNode<T>> first, LinkedList<BinaryNode<T>> second,
+                                                        ArrayList<LinkedList<BinaryNode<T>>> results, LinkedList<BinaryNode<T>> prefix) {
+        if(first.isEmpty() || second.isEmpty()) {
+            LinkedList<BinaryNode<T>> result = (LinkedList<BinaryNode<T>>) prefix.clone();
+            result.addAll(first);
+            result.addAll(second);
+            results.add(result);
+            return;
+        }
+
+        BinaryNode<T> headFirst = first.removeFirst();
+        prefix.addLast(headFirst);
+        weave(first, second, results, prefix);
+        prefix.removeLast();
+        first.addFirst(headFirst);
+
+        BinaryNode<T> headSecond = second.removeFirst();
+        prefix.addLast(headSecond);
+        weave(first, second, results, prefix);
+        prefix.removeLast();
+        second.addFirst(headSecond);
+    }
+
+    private static <T extends Comparable<T>> ArrayList<LinkedList<BinaryNode<T>>> allSequences(BinaryNode<T> bst) {
+        ArrayList<LinkedList<BinaryNode<T>>> result = new ArrayList<LinkedList<BinaryNode<T>>>();
+
+        if(bst == null){
+            result.add(new LinkedList<BinaryNode<T>>());
+            return result;
+        }
+
+        LinkedList<BinaryNode<T>> prefix = new LinkedList<BinaryNode<T>>();
+        prefix.add(bst);
+
+        ArrayList<LinkedList<BinaryNode<T>>> l = allSequences(bst.getLeft());
+        ArrayList<LinkedList<BinaryNode<T>>> r = allSequences(bst.getRight());
+
+        for(LinkedList<BinaryNode<T>> n1: l) {
+            for(LinkedList<BinaryNode<T>> n2: r) {
+                ArrayList<LinkedList<BinaryNode<T>>> weaved = new ArrayList<LinkedList<BinaryNode<T>>>();
+                weave(n1, n2, weaved, prefix);
+                result.addAll(weaved);
+            }
+        }
+
+        return result;
+    }
+
+
     static public void main(String[] args) {
-        BinaryNode<Character> H = new BinaryNode<Character>('H', null, null);
+        ArrayList<Integer> x = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7));
+        BinaryNode<Integer> t = buildBinarySearchTreeFromAscendingUniqueList(x);
+        System.out.println(t);
 
-        BinaryNode<Character> E = new BinaryNode<Character>('E', null, null);
-        BinaryNode<Character> F = new BinaryNode<Character>('F', null, null);
-        BinaryNode<Character> G = new BinaryNode<Character>('G', null, null);
-        BinaryNode<Character> D = new BinaryNode<Character>('D', H, null);
-
-
-        BinaryNode<Character> C = new BinaryNode<Character>('C', F, G);
-        BinaryNode<Character> B = new BinaryNode<Character>('B', D, E);
-
-        BinaryNode<Character> A = new BinaryNode<Character>('A', B, C);
-
-        System.out.println(firstCommonAncestor(D, E));
-        System.out.println(firstCommonAncestor(D, F));
-        System.out.println(firstCommonAncestor(D, C));
-        System.out.println(firstCommonAncestor(H, E));
-        System.out.println(firstCommonAncestor(F, G));
-        System.out.println(firstCommonAncestor(A, B));
-        System.out.println(firstCommonAncestor(B, C));
+        System.out.println(allSequences(t));
     }
 }
