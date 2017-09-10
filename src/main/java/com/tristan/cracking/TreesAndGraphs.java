@@ -1,17 +1,109 @@
 package com.tristan.cracking;
 
-import sun.awt.image.ImageWatched;
-
 import java.util.*;
 
-class GraphNode {
-    private String name;
-    private ArrayList<GraphNode> adjacent;
+
+class Tuple<X, Y> {
+    private final X x;
+    private final Y y;
+    public Tuple(X x, Y y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public X _1() {
+        return x;
+    }
+
+    public Y _2() {
+        return y;
+    }
+}
+
+class DependencyGraph {
+    private ArrayList<GraphNode<Character>> nodes = new ArrayList<GraphNode<Character>>();
+
+    DependencyGraph(List<Character> n, List<Tuple<Character, Character>> links) {
+        for(Character c: n) {
+            this.nodes.add(new GraphNode<Character>(c));
+        }
+
+        for(Tuple<Character, Character> l: links) {
+            GraphNode<Character> dependency = getByName(l._1());
+            GraphNode<Character> dependent = getByName(l._2());
+            if(dependency != null && dependent != null) {
+                dependent.updateAdjacent(dependency);
+            }
+        }
+    }
+
+    private GraphNode<Character> getByName(Character c) {
+        for(GraphNode<Character> n: nodes) {
+            if(n.getName() == c) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    public List<Character> buildOrder() {
+        ArrayList<GraphNode<Character>> order = new ArrayList<GraphNode<Character>>();
+
+        while(order.size() < nodes.size()) {
+            boolean nodeAdded = false;
+            for (GraphNode<Character> node : nodes) {
+                if(order.contains(node))
+                    continue;
+
+                ArrayList<GraphNode<Character>> temp = new ArrayList<GraphNode<Character>>(node.getAdjacent());
+                temp.removeAll(order);
+
+                if (temp.isEmpty()) {
+                    order.add(node);
+                    nodeAdded = true;
+                }
+            }
+
+            if(!nodeAdded) {
+                throw new NoSuchElementException();
+            }
+
+        }
+
+        ArrayList<Character> x= new ArrayList<Character>();
+        for(GraphNode<Character> n: order) {
+            x.add(n.getName());
+        }
+        return x;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for(GraphNode<Character> n: nodes) {
+            s.append(n.getName());
+            s.append(": ");
+            for(GraphNode<Character> z: n.getAdjacent()) {
+                s.append(z.getName());
+            }
+            s.append("\n");
+        }
+        return s.toString();
+    }
+}
+
+class GraphNode<T> {
+    private T name;
+    private ArrayList<GraphNode<T>> adjacent;
     private boolean visited = false;
 
-    GraphNode(String name) {
+    GraphNode(T name) {
         this.name = name;
-        this.adjacent = new ArrayList<GraphNode>();
+        this.adjacent = new ArrayList<GraphNode<T>>();
+    }
+
+    T getName() {
+        return this.name;
     }
 
     void setVisited(boolean visited) {
@@ -22,11 +114,11 @@ class GraphNode {
         return this.visited;
     }
 
-    ArrayList<GraphNode> getAdjacent() {
+    ArrayList<GraphNode<T>> getAdjacent() {
         return this.adjacent;
     }
 
-    void updateAdjacent(GraphNode node) {
+    void updateAdjacent(GraphNode<T> node) {
         if(!this.adjacent.contains(node))
             this.adjacent.add(node);
     }
@@ -35,10 +127,10 @@ class GraphNode {
     public String toString() {
         StringBuilder s = new StringBuilder();
 
-        s.append(name);
+        s.append(name.toString());
         s.append(": ");
         for(GraphNode n: this.adjacent) {
-            s.append(n.name);
+            s.append(n.name.toString());
             s.append(" ");
         }
 
@@ -46,16 +138,16 @@ class GraphNode {
     }
 }
 
-class Graph {
-    private ArrayList<GraphNode> nodes;
+class Graph<T> {
+    private ArrayList<GraphNode<T>> nodes;
 
     Graph() {
-        nodes = new ArrayList<GraphNode>();
+        nodes = new ArrayList<GraphNode<T>>();
     }
 
-    void addNode(GraphNode node, GraphNode[] adjacentNodes) {
+    void addNode(GraphNode<T> node, GraphNode<T>[] adjacentNodes) {
         if(!this.nodes.contains(node)) {
-            for (GraphNode n : adjacentNodes) {
+            for (GraphNode<T> n : adjacentNodes) {
                 node.updateAdjacent(n);
             }
             this.nodes.add(node);
@@ -63,21 +155,21 @@ class Graph {
 
     }
 
-    boolean routeExists(GraphNode source, GraphNode destination) {
+    boolean routeExists(GraphNode<T> source, GraphNode<T> destination) {
         if(!nodes.contains(source) || !nodes.contains(destination)) {
             return false;
         } else {
-            MyQueue<GraphNode> q = new MyQueue<GraphNode>();
+            MyQueue<GraphNode<T>> q = new MyQueue<GraphNode<T>>();
             q.add(source);
 
-            for(GraphNode n: nodes) {
+            for(GraphNode<T> n: nodes) {
                 n.setVisited(false);
             }
             source.setVisited(true);
 
             while(!q.isEmpty()) {
-                GraphNode v = q.remove();
-                for(GraphNode n: v.getAdjacent()) {
+                GraphNode<T> v = q.remove();
+                for(GraphNode<T> n: v.getAdjacent()) {
                     if(n == destination) {
                         return true;
                     } else if (!n.getVisited()){
@@ -257,26 +349,28 @@ public class TreesAndGraphs {
     }
 
     static public void main(String[] args) {
-        BinaryNode<Character> H = new BinaryNode<Character>('H', null, null);
+        final Tuple<Character, Character> d1 = new Tuple<Character, Character>('a', 'd');
+        final Tuple<Character, Character> d2 = new Tuple<Character, Character>('f', 'b');
+        final Tuple<Character, Character> d3 = new Tuple<Character, Character>('b', 'd');
+        final Tuple<Character, Character> d4 = new Tuple<Character, Character>('f', 'a');
+        final Tuple<Character, Character> d5 = new Tuple<Character, Character>('d', 'c');
 
-        BinaryNode<Character> E = new BinaryNode<Character>('E', null, null);
-        BinaryNode<Character> F = new BinaryNode<Character>('F', null, null);
-        BinaryNode<Character> G = new BinaryNode<Character>('G', null, null);
-        BinaryNode<Character> D = new BinaryNode<Character>('D', H, null);
+        ArrayList<Tuple<Character, Character>> d = new ArrayList<Tuple<Character, Character>>() {{
+            add(d1);add(d2);add(d3);add(d4);add(d5);
+        }};
 
+        ArrayList<Character> code = new ArrayList<Character>() {{
+            add('a');
+            add('b');
+            add('c');
+            add('d');
+            add('e');
+            add('f');
+        }};
 
-        BinaryNode<Character> C = new BinaryNode<Character>('C', F, G);
-        BinaryNode<Character> B = new BinaryNode<Character>('B', D, E);
+        DependencyGraph g = new DependencyGraph(code, d);
 
-        BinaryNode<Character> A = new BinaryNode<Character>('A', B, C);
-
-        System.out.println(inOrderSuccesor(A));
-        System.out.println(inOrderSuccesor(B));
-        System.out.println(inOrderSuccesor(C));
-        System.out.println(inOrderSuccesor(D));
-        System.out.println(inOrderSuccesor(E));
-        System.out.println(inOrderSuccesor(F));
-        System.out.println(inOrderSuccesor(G));
-        System.out.println(inOrderSuccesor(H));
+        System.out.println(g);
+        System.out.println(g.buildOrder());
     }
 }
