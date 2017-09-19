@@ -1,7 +1,6 @@
 package com.tristan.cracking;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
@@ -26,22 +25,38 @@ final class Country {
 }
 
 
+class SomeCollection {
+    private HashSet<Integer> s;
+
+    SomeCollection() {
+        this.s = new HashSet<>();
+    }
+
+    void addValue(Integer val) {
+        s.add(val);
+    }
+
+    boolean twoAdd(Integer val){
+        for(Integer i: s){
+            if(s.contains(val - i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 public class Language {
-    static Integer getPopulation(List<Country> countries, final String countryName) {
+    private static Integer getPopulation(List<Country> countries, final String countryName) {
         return countries.stream().filter(c -> c.name.equals(countryName)).mapToInt(Country::getPopulation).sum();
     }
 
-//    static List<Integer> getRandomSubset(List<Integer> list) {
-//
-//    }
-
     public static void main(String[] args) {
-        ArrayList<Country> cs = new ArrayList<>();
-        cs.add(new Country("USA", 100));
-        cs.add(new Country("USA", 100));
-        cs.add(new Country("Ukraine", 100));
+        SomeCollection c = new SomeCollection();
+        c.addValue(1);
+        c.addValue(3);
 
-        System.out.println(getPopulation(cs, "USA"));
-        System.out.println(getPopulation(cs, "Ukraine"));
+        System.out.println(c.twoAdd(4));
+        System.out.println(c.twoAdd(3));
     }
 }
