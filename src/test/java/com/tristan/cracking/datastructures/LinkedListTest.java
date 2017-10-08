@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.tristan.cracking.datastructures.LinkedList;
-
 
 class LinkedListTest {
     private LinkedList<Integer> l;
@@ -30,19 +28,26 @@ class LinkedListTest {
 
     @Test
     void testSimpleAddRemoveLast(){
-        l.add(1);
-        l.add(2);
-        l.add(3);
+        l.addLast(1);
+        l.addLast(2);
+        l.addLast(3);
         int i = l.removeFirst();
         assertEquals(i, 1);
     }
 
     @Test
     void testSimpleAddRemoveRemoveFirst(){
-        l.add(1);
-        l.add(2);
-        l.add(3);
+        l.addLast(1);
+        l.addLast(2);
+        l.addLast(3);
         int i = l.removeLast();
         assertEquals(i, 3);
+    }
+
+    @Test void testAddFirst() {
+        l.addFirst(2);
+        l.addFirst(1);
+        assertEquals(l.removeFirst(), new Integer(1));
+        assertEquals(l.removeFirst(), new Integer(2));
     }
 }

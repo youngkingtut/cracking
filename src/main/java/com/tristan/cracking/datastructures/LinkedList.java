@@ -1,42 +1,56 @@
 package com.tristan.cracking.datastructures;
 
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.EmptyStackException;
 
 public class LinkedList<T> {
-    private class Node {
-        T val;
-        Node next;
-        Node prev;
-        Node(T v, Node n, Node l) {
-            this.val = v;
-            this.next = n;
-            this.prev = l;
-        }
-    }
-
-    private Node first;
-    private Node last;
+    private LinkedListNode<T> first;
+    private LinkedListNode<T> last;
 
     public LinkedList() {
         this.first = null;
         this.last = null;
     }
 
-    public void add(T v) {
+    public LinkedList(LinkedList<T> other) {
+        this.first = null;
+        this.last = null;
+
+        LinkedListNode<T> runner = other.first;
+        while(runner != null) {
+            this.addLast(runner.getVal());
+            runner = runner.getNext();
+        }
+    }
+
+    public LinkedListNode<T> getFirstNode() {
+        return first;
+    }
+
+    public LinkedListNode<T> getLastNode() {
+        return last;
+    }
+
+    public void addFirst(T v) {
         if(first == null) {
-            first = new Node(v, null, null);
+            addLast(v);
+        } else if(first == last) {
+            first = new LinkedListNode<>(v, first, null);
+            last = first.getNext();
+        } else {
+            first = new LinkedListNode<>(v, first, null);
+        }
+    }
+
+    public void addLast(T v) {
+        if(first == null) {
+            first = new LinkedListNode<>(v, null, null);
             last = first;
         } else if(first == last) {
-            first.next = new Node(v, null, first);
-            last = first.next;
+            first.setNext(new LinkedListNode<>(v, null, first));
+            last = first.getNext();
         } else {
-            last.next = new Node(v, null, last);
-            last = last.next;
+            last.setNext(new LinkedListNode<>(v, null, last));
+            last = last.getNext();
         }
     }
 
@@ -44,13 +58,13 @@ public class LinkedList<T> {
         if(first == null) {
             throw new EmptyStackException();
         }
-        T v = first.val;
+        T v = first.getVal();
 
         if(first == last) {
             first = null;
             last = null;
         } else {
-            first = first.next;
+            first = first.getNext();
         }
 
         return v;
@@ -60,15 +74,33 @@ public class LinkedList<T> {
         if(last == null) {
             throw new EmptyStackException();
         }
-        T v = last.val;
+        T v = last.getVal();
 
         if(first == last){
             first = null;
             last = null;
         } else {
-            last = last.prev;
+            last = last.getPrev();
         }
         return v;
+    }
+
+    public boolean isEmpty() {
+        return first == null;
+    }
+
+    public int getSize(){
+        if(isEmpty()){
+            return 0;
+        } else {
+            LinkedListNode temp = first;
+            int count = 0;
+            while(temp != null) {
+                count++;
+                temp = temp.getNext();
+            }
+            return count;
+        }
     }
 }
 

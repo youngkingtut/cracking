@@ -1,4 +1,4 @@
-package com.tristan.cracking;
+package com.tristan.cracking.problems;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -312,7 +312,7 @@ public class LinkedLists {
         y.add(1);
         y.add(3);
 
-//        x.add(y.getHead().getNext());
+//        x.addLast(y.getHead().getNext());
 
 //        System.out.println(x.toString());
 //        System.out.println(y.toString());
