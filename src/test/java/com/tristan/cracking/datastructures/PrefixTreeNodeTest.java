@@ -1,4 +1,4 @@
-package com.tristan.crackin.datastructures;
+package com.tristan.cracking.datastructures;
 
 
 import org.junit.jupiter.api.BeforeEach;
